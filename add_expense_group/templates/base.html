@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ExpenseSplitter</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    {% block head %} {% endblock %}
+    <style>
+      .center-select {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+      .center-select2 {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+      .card-img-top {
+        max-width: 150px;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+      }
+      .white-heart {
+        font-size: 48px;
+        color: #ccc;
+        cursor: pointer;
+        margin: 0 auto;
+        display: block;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .red-heart {
+        font-size: 48px;
+        color: red;
+        cursor: pointer;
+        margin: 0 auto;
+        display: block;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" type="button" id="main-page">ExpenseSplitter</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a type="button" class="nav-link" id="home-page" href="/"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+
+          {% if session.get('logged_in') %}
+          <li class="nav-item">
+            <a type="button" id="add-expense">Add Expense Group</a>
+          </li>
+          {% endif %}
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          {% if not session.get('logged_in') %}
+          <li class="nav-item">
+            <a class="nav-link" href="/auth">Register/Login</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard"
+              >{{ session['user']['email'] }}</a
+            >
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+
+    {% block content %} {% endblock %}
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document
+        .getElementById("add-expense")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          window.location.href = "http://127.0.0.1:5004/add_expense_group";
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+      document
+        .getElementById("main-page")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          window.location.href = "http://127.0.0.1:5001/";
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+      document
+        .getElementById("home-page")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          window.location.href = "http://127.0.0.1:5001/";
+        });
+    });
+  </script>
+</html>

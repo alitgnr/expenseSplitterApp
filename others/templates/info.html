@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Info Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .message-container {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+      }
+
+      h1 {
+        color: #333;
+        font-size: 24px;
+        margin-top: 0;
+      }
+
+      p {
+        color: #666;
+        font-size: 18px;
+        margin-bottom: 20px;
+      }
+
+      .timer {
+        color: #999;
+        font-size: 16px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="message-container">
+      <h1>Info</h1>
+      <p id="message">{{ message }}</p>
+      <p class="timer">
+        Redirecting in <span id="countdown">5</span> seconds...
+      </p>
+    </div>
+
+    <script>
+      var countdownElement = document.getElementById("countdown");
+      var seconds = 1;
+
+      function updateCountdown() {
+        countdownElement.textContent = seconds;
+        seconds--;
+
+        if (seconds < 0) {
+          var redirectUrl = "{{ redirect_url }}";
+          console.log(redirectUrl);
+          clearInterval(timerInterval);
+          window.location.href = redirectUrl;
+        }
+      }
+
+      updateCountdown();
+
+      var timerInterval = setInterval(updateCountdown, 1000);
+    </script>
+  </body>
+</html>

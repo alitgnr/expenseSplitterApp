@@ -1,0 +1,112 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="center-select">
+  <form
+    id="add-item-form"
+    name="add-item-form"
+    action="javascript:void(0);"
+    class="form-container"
+    method="POST"
+  >
+    <input type="hidden" name="item_type" value="{{ item_type }}" />
+
+    <div id="fields-container">
+      {% for field in fields %}
+      <label for="{{ field|lower|replace(' ', '_') }}"
+        >{{ field|capitalize }}:</label
+      >
+      <input
+        type="text"
+        id="{{ field|lower|replace(' ', '_') }}"
+        name="{{ field|lower|replace(' ', '_') }}"
+        required
+      /><br />
+      {% endfor %}
+    </div>
+
+    <button id="add-more-fields" class="btn btn-primary">Add new person</button>
+    <button id="add-expense-group-btn" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document
+      .getElementById("add-expense-group-btn")
+      .addEventListener("click", function (e) {
+        e.preventDefault();
+        var form = document.querySelector("form[name='add-item-form']");
+        submitForm(form, "/add_expense_group");
+      });
+    function submitForm(form, url) {
+      var formData = new FormData(form);
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://127.0.0.1:5004" + url, true);
+      xhr.withCredentials = true; // Include cookies in cross-origin requests
+
+      xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 400) {
+          try {
+            var response = JSON.parse(xhr.responseText);
+
+            if (response.message && response.redirect_url) {
+              window.location.href =
+                "/info?message=" +
+                response.message +
+                "&redirect_url=" +
+                response.redirect_url;
+            } else {
+              window.location.href = "/";
+            }
+          } catch (e) {
+            console.error("Error parsing JSON response");
+          }
+        } else {
+          var resp = JSON.parse(xhr.responseText);
+          var errorElement = form.querySelector(".error");
+          errorElement.textContent = resp.error;
+          errorElement.classList.remove("error--hidden");
+        }
+      };
+
+      xhr.onerror = function () {
+        console.error("Network error occurred");
+      };
+
+      xhr.send(formData);
+    }
+  });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const item_type = "{{ item_type }}";
+    var number = "{{ number }}";
+    number = parseInt(number) + 1;
+
+    document
+      .getElementById("add-more-fields")
+      .addEventListener("click", function () {
+        const container = document.getElementById("fields-container");
+        const newFieldSet = document.createElement("div");
+        newFieldSet.classList.add("custom-field-set");
+
+        const newFieldLabel = document.createElement("label");
+        newFieldLabel.textContent = "Person" + number + ":";
+        newFieldLabel.type = "text";
+        newFieldLabel.name = "custom_field_name[]";
+        number++;
+
+        const newFieldValue = document.createElement("input");
+        newFieldValue.type = "text";
+        newFieldValue.placeholder = "Name";
+        newFieldValue.name = "custom_field_value[]";
+
+        newFieldSet.appendChild(newFieldLabel);
+        newFieldSet.appendChild(newFieldValue);
+        container.appendChild(newFieldSet);
+      });
+  });
+</script>
+
+{% endblock %}

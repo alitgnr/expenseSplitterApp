@@ -1,0 +1,74 @@
+{% extends "base.html" %} {% block content %}
+<style>
+  .white-heart {
+    font-size: 48px; 
+    color: green;
+    cursor: pointer;
+    margin: 0 auto; 
+    display: block; 
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .red-heart {
+    font-size: 48px; 
+    color: yellow;
+    cursor: pointer;
+    margin: 0 auto; 
+    display: block; 
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+</style>
+  </head>
+  
+  <div class="container mt-5">
+    <div class="card">
+      <div class="card-header">User Profile</div>
+      <div class="card-body">
+        {% if user %}
+        <h5 class="card-title">{{ user.username }}</h5>
+        <p class="card-text">Email: {{ user.email }}</p>
+        <p class="card-text">Phone: {{ user.phone }}</p>
+       
+        {% else %}
+        <p class="text-warning">{{message}}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <h2>Expense Groups</h2>
+
+  <div class="container">
+    <div class="row">
+      {% for item in items %}
+      <div class="col-md-4 mb-4">
+        <div
+          class="card expenses"
+          onclick="window.location.href='/item?id={{ item._id }}';"
+          id="expense-card"
+        >
+          <div class="card-body">
+            <h5 class="card-title">{{ item.event_name }}</h5>
+  
+            <br /><br />
+      
+            <h6 class="card-subtitle mb-2 text-muted">Date: {{ item.date }}</h6>
+  
+            <a href="/item?id={{ item._id }}" class="card-link">View</a>
+       
+            <br />
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <p>No items found.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+{% endblock %}

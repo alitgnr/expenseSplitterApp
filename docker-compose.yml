@@ -1,0 +1,56 @@
+version: "3.10"
+services:
+  auth:
+    build: ./auth
+    ports:
+      - "5000:5000"
+
+    networks:
+      - backend
+    env_file:
+      - .env
+
+  others:
+    build: ./others
+    ports:
+      - "5001:5001"
+
+    networks:
+      - backend
+    env_file:
+      - .env
+
+  add_expense:
+    build: ./add_expense
+    ports:
+      - "5002:5002"
+
+    networks:
+      - backend
+    env_file:
+      - .env
+  add_expense-group:
+    build: ./add_expense_group
+    ports:
+      - "5004:5004"
+
+    networks:
+      - backend
+    env_file:
+      - .env
+
+  database:
+    build: ./database
+    hostname: database
+    ports:
+      - "5003:5003"
+
+    networks:
+      - backend
+    env_file:
+      - .env
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge

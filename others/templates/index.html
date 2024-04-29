@@ -1,0 +1,117 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container">
+  <div class="row">
+    {% for item in items %}
+    <div class="col-md-4 mb-4">
+      <div
+        class="card"
+        onclick="window.location.href='/item?id={{ item._id }}';"
+      >
+        <div class="card-body">
+          <h5 class="card-title">{{ item.title }}</h5>
+          {% if item.favorite and viewer_id %}
+          <div
+            class="red-heart"
+            id="favoriteHeart"
+            data-item-id="{{ item._id }}"
+          >
+            ❤
+          </div>
+          {% endif %} {% if not item.favorite and viewer_id %}
+          <div
+            class="white-heart"
+            id="favoriteHeart"
+            data-item-id="{{ item._id }}"
+          >
+            🤍
+          </div>
+          {% endif %}
+          <img
+            src="{{ item.image }}"
+            class="card-img-top"
+            alt="{{ item.title }}"
+          />
+          <br /><br />
+          <h6 class="card-subtitle mb-2 text-muted">
+            Category: {{ item.category }}
+          </h6>
+          <h6 class="card-subtitle mb-2 text-muted">Date: {{ item.date }}</h6>
+          <h6 class="card-subtitle mb-2 text-muted">
+            Price: ${{ item.price }}
+          </h6>
+          <p class="card-text">{{ item.description }}</p>
+          <a href="/item?id={{ item._id }}" class="card-link">View</a>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <p>No items found.</p>
+    {% endfor %}
+  </div>
+
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      {% if current_page > 1 %}
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="/?page={{ current_page - 1 }}{% if current_category != 'All' %}&category={{ current_category }}{% endif %}"
+          aria-label="Previous"
+        >
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      {% endif %} {% for i in range(1, total_pages + 1) %}
+      <li class="page-item{% if i == current_page %} active{% endif %}">
+        <a
+          class="page-link"
+          href="/?page={{ i }}{% if current_category != 'All' %}&category={{ current_category }}{% endif %}"
+          >{{ i }}</a
+        >
+      </li>
+      {% endfor %} {% if current_page < total_pages %}
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="/?page={{ current_page + 1 }}{% if current_category != 'All' %}&category={{ current_category }}{% endif %}"
+          aria-label="Next"
+        >
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var heartIcons = document.querySelectorAll("#favoriteHeart");
+    heartIcons.forEach(function (heartIcon) {
+      heartIcon.onclick = function () {
+        var itemId = heartIcon.getAttribute("data-item-id");
+        var data = { id: itemId, uid: "{{ viewer_id }}" };
+
+        fetch("/toggle-favorite", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data.message);
+
+            heartIcon.classList.toggle("is-favorite");
+
+            location.reload();
+          });
+      };
+    });
+  });
+</script>
+
+{% endblock %}

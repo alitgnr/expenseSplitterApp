@@ -1,0 +1,132 @@
+{% extends "base.html" %} {% block content %}
+
+<h2>Add New {{ item_type|capitalize }}</h2>
+<div class="center-select">
+  <form id="add-item-form" action="/add_expense_group" method="post">
+    <input type="hidden" name="item_type" value="{{ item_type }}" />
+
+    <div id="fields-container">
+      {% for field in fields %}
+      <label for="{{ field|lower|replace(' ', '_') }}"
+        >{{ field|capitalize }}:</label
+      >
+      <input
+        type="text"
+        id="{{ field|lower|replace(' ', '_') }}"
+        name="{{ field|lower|replace(' ', '_') }}"
+        required
+      /><br />
+      {% endfor %}
+    </div>
+    {% if item_type == 'phones' %}
+    <button type="button" id="add-camera-specs">
+      Add Camera Specification
+    </button>
+    {% endif %} {% if item_type == 'computers' %}
+    <button type="button" id="add-camera-specs">
+      Add Storage Specification
+    </button>
+    {% endif %} {% if item_type == 'privatelessons' %}
+    <button type="button" id="add-camera-specs">Add New Lesson</button>
+    {% endif %}
+    <button type="button" id="add-more-fields">Add More Fields</button>
+    <input type="submit" value="Submit" />
+  </form>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const item_type = "{{ item_type }}";
+    if (item_type === "phones") {
+      document
+        .getElementById("add-camera-specs")
+        .addEventListener("click", function () {
+          const container = document.getElementById("fields-container");
+          const newFieldLabel = document.createElement("label");
+          newFieldLabel.textContent = "Camera Specification:";
+
+          const newFieldName = document.createElement("input");
+          newFieldName.type = "text";
+          newFieldName.placeholder = "Specification Name";
+          newFieldName.name = "camera_specifications_name[]";
+
+          const newFieldValue = document.createElement("input");
+          newFieldValue.type = "text";
+          newFieldValue.placeholder = "Specification Value";
+          newFieldValue.name = "camera_specifications_value[]";
+
+          container.appendChild(newFieldLabel);
+          container.appendChild(newFieldName);
+          container.appendChild(newFieldValue);
+          container.appendChild(document.createElement("br"));
+        });
+    }
+    if (item_type === "computers") {
+      document
+        .getElementById("add-camera-specs")
+        .addEventListener("click", function () {
+          const container = document.getElementById("fields-container");
+          const newFieldLabel = document.createElement("label");
+          newFieldLabel.textContent = "Storage:";
+
+          const newFieldName = document.createElement("input");
+          newFieldName.type = "text";
+          newFieldName.placeholder = "Specification Name";
+          newFieldName.name = "storage_specifications_name[]";
+
+          const newFieldValue = document.createElement("input");
+          newFieldValue.type = "text";
+          newFieldValue.placeholder = "Specification Value";
+          newFieldValue.name = "storage_specifications_value[]";
+
+          container.appendChild(newFieldLabel);
+          container.appendChild(newFieldName);
+          container.appendChild(newFieldValue);
+          container.appendChild(document.createElement("br"));
+        });
+    }
+    if (item_type === "privatelessons") {
+      document
+        .getElementById("add-camera-specs")
+        .addEventListener("click", function () {
+          const container = document.getElementById("fields-container");
+          const newFieldLabel = document.createElement("label");
+          newFieldLabel.textContent = "Add more lessons:";
+
+          const newFieldName = document.createElement("input");
+          newFieldName.type = "text";
+          newFieldName.placeholder = "Lesson Type";
+          newFieldName.name = "lesson_name[]";
+
+          container.appendChild(newFieldLabel);
+          container.appendChild(newFieldName);
+
+          container.appendChild(document.createElement("br"));
+        });
+    }
+
+    document
+      .getElementById("add-more-fields")
+      .addEventListener("click", function () {
+        const container = document.getElementById("fields-container");
+        const newFieldSet = document.createElement("div");
+        newFieldSet.classList.add("custom-field-set");
+
+        const newFieldName = document.createElement("input");
+        newFieldName.type = "text";
+        newFieldName.placeholder = "Field Name";
+        newFieldName.name = "custom_field_name[]";
+
+        const newFieldValue = document.createElement("input");
+        newFieldValue.type = "text";
+        newFieldValue.placeholder = "Field Value";
+        newFieldValue.name = "custom_field_value[]";
+
+        newFieldSet.appendChild(newFieldName);
+        newFieldSet.appendChild(newFieldValue);
+        container.appendChild(newFieldSet);
+      });
+  });
+</script>
+
+{% endblock %}

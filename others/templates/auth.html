@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authentication</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      .error--hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  {% extends "base.html" %} {% block content %}
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Register</h2>
+        <form method="POST" action="javascript:void(0);" name="signup_form">
+          <input type="hidden" name="auth_type" value="register" />
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="phone"
+              name="phone"
+              required
+            />
+          <div class="form-group">
+            <label for="username">Name:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              name="username"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="public">Show my information publicly:</label>
+            <input type="checkbox" id="public" name="public" />
+          </div>
+
+          <div class="error error--hidden"></div>
+          <button id="signup-btn" class="btn btn-primary">Register</button>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <h2>Login</h2>
+        <form method="POST" action="javascript:void(0);" name="login_form">
+          <input type="hidden" name="auth_type" value="login" />
+          <div class="form-group">
+            <label for="username_login">Email:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="username_login"
+              name="email"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="password_login">Password:</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password_login"
+              name="password"
+              required
+            />
+          </div>
+          <div class="error error--hidden"></div>
+          <button id="login-btn" class="btn btn-primary">Login</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document
+        .getElementById("signup-btn")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          var form = document.querySelector("form[name='signup_form']");
+          submitForm(form, "/user/signup");
+
+        });
+
+      document
+        .getElementById("login-btn")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          var form = document.querySelector("form[name='login_form']");
+          submitForm(form, "/user/login");
+        });
+        function submitForm(form, url) {
+    var formData = new FormData(form);
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", 'http://127.0.0.1:5000' + url, true);
+    xhr.withCredentials = true; // Include cookies in cross-origin requests
+
+
+    xhr.onload = function () {
+      if (xhr.status >= 200 && xhr.status <= 400) {
+        try {
+          var response = JSON.parse(xhr.responseText);
+
+       
+          if (response.message && response.redirect_url) {
+            
+
+            window.location.href = "/info?message=" + response.message + "&redirect_url=" + response.redirect_url;
+
+            
+            
+          } else {
+            window.location.href = "/";
+          }
+        } catch (e) {
+          console.error("Error parsing JSON response");
+        }
+      } else {
+        var resp = JSON.parse(xhr.responseText);
+        var errorElement = form.querySelector(".error");
+        errorElement.textContent = resp.error;
+        errorElement.classList.remove("error--hidden");
+      }
+    };
+
+    xhr.onerror = function () {
+      console.error("Network error occurred");
+    };
+
+    xhr.send(formData);
+  }
+});
+  </script>
+  {% endblock %}
+</html>

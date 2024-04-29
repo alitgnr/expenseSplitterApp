@@ -1,0 +1,285 @@
+{% extends "base.html" %} {% block content %}
+
+<style>
+  .card-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+  }
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+  }
+
+  .btn-edit {
+    background-color: #f0ad4e;
+  }
+
+  .btn-delete {
+    background-color: #d9534f;
+  }
+  .card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 300px;
+    margin: 10px;
+    text-align: center;
+  }
+  .card h1,
+  .card h2 {
+    background-color: #007bff;
+    color: white;
+    margin: 0;
+    padding: 20px;
+  }
+  .card p,
+  .card form {
+    padding: 20px;
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  .btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 5px;
+  }
+  .btn--secondary {
+    background-color: #6c757d;
+  }
+  .white-heart {
+    font-size: 48px;
+    color: white;
+    cursor: pointer;
+    margin: 0 auto;
+    display: block;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .red-heart {
+    font-size: 48px;
+    color: red;
+    cursor: pointer;
+    margin: 0 auto;
+    display: block;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .expenses {
+    background-color: #f8d7da; /* Light red for expenses */
+    color: #721c24;
+  }
+</style>
+
+<div class="card-wrapper">
+  <div class="card">
+    <h1>Dashboard</h1>
+    <p>You are currently logged in.</p>
+    <button id="signout-btn" class="btn btn-primary">Sign Out</button>
+  </div>
+
+  <div class="card">
+    <h2>Your Info</h2>
+    <p>
+      <br />
+      {% if session['user']['is_admin'] %}
+      <a href="/admin" class="btn btn-delete">Admin Panel</a>
+      {% endif %}
+      <br />
+      <strong>Phone:</strong> {{ session['user']['phone'] }}<br />
+      <strong>Email:</strong> {{ session['user']['email'] }}
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Update Your Profile</h2>
+    <form method="POST" action="javascript:void(0);" name="update_form">
+      <div class="form-group">
+        <label for="username">Name</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          value="{{ session['user']['username'] }}"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input
+          type="text"
+          id="phone"
+          name="phone"
+          value="{{ session['user']['phone'] }}"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="public">Show my information publicly</label>
+        <input type="checkbox" id="public" name="public" {% if
+        session['user']['public'] %} checked {% endif %} />
+      </div>
+
+      <button id="update-btn" class="btn btn-primary">Update Profile</button>
+    </form>
+  </div>
+</div>
+
+<h2>Expense Groups</h2>
+
+<div class="container">
+  <div class="row">
+    {% for item in items %}
+    <div class="col-md-4 mb-4">
+      <div
+        class="card expenses"
+        onclick="window.location.href='/item?id={{ item._id }}';"
+        id="expense-card"
+      >
+        <div class="card-body">
+          <h5 class="card-title">{{ item.event_name }}</h5>
+
+          <br /><br />
+
+          <h6 class="card-subtitle mb-2 text-muted">Date: {{ item.date }}</h6>
+
+          <a href="/item?id={{ item._id }}" class="card-link">View</a>
+
+          <br />
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <p>No items found.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document
+      .getElementById("update-btn")
+      .addEventListener("click", function (e) {
+        e.preventDefault();
+        console.log("Updating profile...");
+        var form = document.querySelector("form[name='update_form']");
+        submitForm(form, "/user/update");
+      });
+    function submitForm(form, url) {
+      var formData = new FormData(form);
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://127.0.0.1:5000" + url, true);
+      xhr.withCredentials = true; // Include cookies in cross-origin requests
+
+      xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 400) {
+          try {
+            var response = JSON.parse(xhr.responseText);
+
+            if (response.message && response.redirect_url) {
+              window.location.href =
+                "/info?message=" +
+                response.message +
+                "&redirect_url=" +
+                response.redirect_url;
+            } else {
+              window.location.href = "/";
+            }
+          } catch (e) {
+            console.error("Error parsing JSON response");
+          }
+        } else {
+          var resp = JSON.parse(xhr.responseText);
+          var errorElement = form.querySelector(".error");
+          errorElement.textContent = resp.error;
+          errorElement.classList.remove("error--hidden");
+        }
+      };
+
+      xhr.onerror = function () {
+        console.error("Network error occurred");
+      };
+
+      xhr.send(formData);
+    }
+  });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document
+      .getElementById("signout-btn")
+      .addEventListener("click", function (e) {
+        e.preventDefault();
+        console.log("Signing out...");
+        submitFormDDC("/user/signout");
+      });
+
+    function submitFormDDC(url) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://127.0.0.1:5000" + url, true);
+      xhr.withCredentials = true; // Include cookies in cross-origin requests
+      console.log("Sending signout request...");
+
+      xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 400) {
+          try {
+            var response = JSON.parse(xhr.responseText);
+            console.log("Signout response: ", response);
+
+            if (response.message && response.redirect_url) {
+              window.location.href =
+                "/info?message=" +
+                response.message +
+                "&redirect_url=" +
+                response.redirect_url;
+            } else {
+              window.location.href = "/";
+            }
+          } catch (e) {
+            console.error("Error parsing JSON response");
+          }
+        } else {
+          var resp = JSON.parse(xhr.responseText);
+          var errorElement = form.querySelector(".error");
+          errorElement.textContent = resp.error;
+          errorElement.classList.remove("error--hidden");
+        }
+      };
+
+      xhr.onerror = function () {
+        console.error("Network error occurred");
+      };
+      xhr.send();
+    }
+  });
+</script>
+{% endblock %}

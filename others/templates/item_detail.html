@@ -1,0 +1,197 @@
+{% extends "base.html" %} {% block content %}
+<style>
+  .item-details {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #fff;
+    text-align: center;
+  }
+  .item-attribute {
+    margin-bottom: 10px;
+  }
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+  }
+
+  .btn-edit {
+    background-color: #f0ad4e;
+  }
+
+  .btn-delete {
+    background-color: #d9534f;
+  }
+  .item-attribute img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  .item-attribute strong {
+    color: #007bff;
+  }
+  h2 {
+    text-align: center;
+    color: #007bff;
+    margin: 20px 0;
+  }
+  .white-heart {
+    font-size: 48px;
+    color: #ccc;
+    cursor: pointer;
+    margin: 0 auto;
+    display: block;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .red-heart {
+    font-size: 48px;
+    color: red;
+    cursor: pointer;
+    margin: 0 auto;
+    display: block;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .card {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .expenses {
+    background-color: #f8d7da; /* Light red for expenses */
+    color: #721c24;
+  }
+
+  .money_given {
+    background-color: #d1ecf1; /* Light blue for money given */
+    color: #0c5460;
+  }
+
+  .income {
+    background-color: #d4edda; /* Light green for income */
+    color: #155724;
+  }
+</style>
+
+<h2>Expense Group Detailsss</h2>
+
+<div class="item-details">
+  <strong>Expense group owner:</strong>
+  <a href="/user?uid={{ owner_uid }}">{{ owner }}</a>
+
+  {% for key, value in item.items() %} {% if key != '_id' and key != 'uid' and
+  key != 'hide item' and key != 'counter' %}
+
+  <div class="item-attribute">
+    <strong>{{ key|capitalize }}:</strong> {{ value }}
+  </div>
+  {% endif %} {% if key == 'counter' %}
+
+  <div class="item-attribute"><strong>Expense count:</strong> {{ value }}</div>
+  {% endif %}{% endfor %} {% if viewer_id == owner_uid %}
+
+  <div class="item-actions">
+    <button id="add-expense-btn" class="btn btn-primary">Add expense</button>
+    <br />
+  </div>
+  {% endif %}
+  <br />
+  {% if viewer_id == owner_uid or viewer_admin %} {% endif %}
+</div>
+
+<h2>Expenses</h2>
+<div class="container">
+  <div class="row">
+    {% for item in items %}
+    <div class="col-md-4 mb-4">
+      <div class="card {{item.type}}">
+        <div class="card-body">
+          <h5 class="card-title">{{ item.title }}</h5>
+          {% if item.type == 'expenses' %}
+          <div class="card-subtitle mb-2 text-muted">Expenses</div>
+          <h6 class="card-subtitle mb-2 text-muted">
+            In {{ item.date }}, {{ item.person_paid }} paid for {{ item.what_for
+            }} amounting to {{ item.amount }} {{currency}}, splitting {{
+            item.split_type }}.
+          </h6>
+
+          {% endif %} {% if item.type == 'money_given' %}
+          <div class="card-subtitle mb-2 text-muted">Money Given</div>
+          <h6 class="card-subtitle mb-2 text-muted">
+            In {{ item.date }}, {{ item.person_gave }} gave {{ item.amount }}
+            {{currency}} for {{ item.what_for }} to {{item.to_whom}}.
+          </h6>
+          {% endif %} {% if item.type == 'income' %}
+
+          <div class="card-subtitle mb-2 text-muted">Income</div>
+          <h6 class="card-subtitle mb-2 text-muted">
+            In {{ item.date }}, {{ item.person }} got money for {{ item.what_for
+            }} amounting to {{ item.amount }} {{currency}}, splitting {{
+            item.split_type }}.
+          </h6>
+
+          {% endif %}
+          <br /><br />
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <p>No items found.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<h2>Expense Management</h2>
+
+{% for balance in balances %} {% if balance.amount < 0 %}
+
+<div class="item-details">
+  <strong>Balance for {{ balance.person }}:</strong> owes {{ balance.amount }}
+  {{currency}}
+</div>
+{% endif %} {% if balance.amount > 0 %}
+<div class="item-details">
+  <strong>Balance for {{ balance.person }}:</strong> is owed {{ balance.amount
+  }} {{currency}}
+</div>
+{% endif %} {% if balance.amount == 0 %}
+<div class="item-details">
+  <strong>Balance for {{ balance.person }}:</strong> is settled
+</div>
+{% endif %} {% endfor %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document
+      .getElementById("add-expense-btn")
+      .addEventListener("click", function (e) {
+        e.preventDefault();
+        makeGETRequest();
+      });
+  });
+  function makeGETRequest() {
+    // item_id is passed as a query parameter
+    var item_id = "{{ item_id }}";
+
+    console.log(item_id);
+    // call port 5002 for /edit_item
+
+    window.location.href = "http://127.0.0.1:5002/edit_item?id=" + item_id;
+  }
+</script>
+
+{% endblock %}
