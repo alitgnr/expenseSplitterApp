@@ -8,7 +8,6 @@ WORKDIR /others
 COPY . /others
 
 # Copy .env file to the container
-COPY .env /others/.env
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
@@ -18,4 +17,4 @@ EXPOSE 5001
 
 
 # Run app.py when the container launches
-CMD ["python", "app.py"]
+CMD ["gunicorn","app:app", "--bind", "0.0.0.0:5001" ]

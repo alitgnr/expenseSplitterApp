@@ -5,7 +5,6 @@ FROM python:3.10-slim
 WORKDIR /add_expense
 
 # Copy .env file to the container
-COPY .env /add_expense/.env
 
 # Copy the current directory contents into the container at /app
 COPY . /add_expense
@@ -19,4 +18,4 @@ EXPOSE 5002
 
 
 # Run app.py when the container launches
-CMD ["python", "app.py"]
+CMD ["gunicorn","app:app", "--bind", "0.0.0.0:5002" ]

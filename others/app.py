@@ -28,9 +28,8 @@ import requests
 load_dotenv()
 
 
-
-
 app = Flask(__name__)
+
 CORS(app,supports_credentials=True)
 app.secret_key = os.getenv('SECRET_KEY')
 app.debug = False
@@ -388,6 +387,13 @@ def get_user_name(user_id):
 
 
 
+
+@app.route('/health')
+def health():
+    return "HEALTHY", 200
+
+
+
 @app.route('/item')
 def item_detail():
     
@@ -497,8 +503,3 @@ def item_detail():
         return "Item ID not provided.", 400
 
 
-
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)

@@ -256,6 +256,11 @@ class User:
 
 
 
+@app.route('/health')
+def health():
+    return "HEALTHY", 200
+
+
 
 
 @app.route('/user/signup', methods=['POST'])
@@ -275,8 +280,4 @@ def login():
 @app.route('/user/update', methods=['POST'])
 def update():
     return User().update()
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
 

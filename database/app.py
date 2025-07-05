@@ -177,7 +177,14 @@ def insert_user():
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 400
     
-    
+
+@app.route('/health')
+def health():
+    return "HEALTHY", 200
+
+
+
+
 @app.route('/insert_items_collection', methods=['POST', 'GET'])
 def insert_items_collection():
     item_data = request.json
@@ -256,7 +263,3 @@ def get_all_users(): # excluding passwords
     return list(users_collection.find({}, {"password": 0}))
 
 
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5003, debug=True)

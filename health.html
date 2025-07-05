@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expense Splitter - Health</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f6f8fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #ffffff;
+      padding: 2rem 3rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    h1 {
+      color: #2ecc71;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      color: #555;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✅ Expense Splitter is Healthy</h1>
+    <p>Status: <strong>UP</strong></p>
+    <p>Timestamp: <span id="timestamp"></span></p>
+  </div>
+
+  <script>
+    document.getElementById('timestamp').innerText = new Date().toLocaleString();
+  </script>
+</body>
+</html>

@@ -7,6 +7,7 @@ sendgrid==6.11.0
 python-dotenv==1.0.1
 validators==0.23.2
 requests==2.26.0
+gunicorn
 blinker==1.8.0
 click==8.1.7
 dnspython==2.6.1

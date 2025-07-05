@@ -49,6 +49,13 @@ def get_user_name(user_id):
 
 
 
+@app.route('/health')
+def health():
+    return "HEALTHY", 200
+
+
+
+
 @app.route('/edit_item', methods=['GET', 'POST'])
 def edit_item():
     if 'user' not in session:
@@ -178,6 +185,3 @@ def info():
      
 
 
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5002, debug=True)

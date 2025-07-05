@@ -5,7 +5,6 @@ FROM python:3.10-slim
 WORKDIR /database
 
 # Copy .env file to the container
-COPY .env /database/.env
 
 # Copy the current directory contents into the container at /app
 COPY . /database
@@ -19,4 +18,4 @@ EXPOSE 5003
 
 
 # Run app.py when the container launches
-CMD ["python", "app.py"]
+CMD ["gunicorn","app:app", "--bind", "0.0.0.0:5003" ]
